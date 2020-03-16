@@ -8,35 +8,61 @@ device_id = 313484
 
 
 def getData():
-    r = requests.get(url = yucom_uri) 
+ 
+	try:
+		r = requests.get(url = yucom_uri,timeout=5)
+	except requests.exceptions.Timeout:
+		print('timeout error')
+		
+		# Maybe set up for a retry, or continue in a retry loop
+	except requests.exceptions.TooManyRedirects:
+		print('too many redrect timeout')
+		
+		# Tell the user their URL was bad and try a different one
+	except requests.exceptions.RequestException as e:
+		# catastrophic error. bail.
+		print('errornya :',e)
+			
+     
   
     # extracting data in json format 
-    data = r.json() 
-    content = data["content"][0]
-    lat = content['latitude']
-    lon = content['longitude']
-    speed = content['speed']
-
-    return lat,lon,speed
+	data = r.json() 
+	content = data["content"][0]
+	lat = content['latitude']
+	lon = content['longitude']
+	speed = content['speed']
+	
+	return lat,lon,speed
     
 
 def postData(lat,lon,speed):
     #
 
-    url = 'https://www.w3schools.com/python/demopage.php'
-    myobj = {
-            'id': device_id,
-            'lat': lat,
-            'lon': lon,
-            'timestamp': getTime(),
-            'speed':speed
-            }
+	myobj = {
+		'id': device_id,
+		'lat': lat,
+		'lon': lon,
+		'timestamp': getTime(),
+		'speed':speed
+	}
 
-
-    x = requests.post(traccar_uri, params=myobj)
+	try:
+		x = requests.post(traccar_uri, params=myobj,timeout=5)
+	except requests.exceptions.Timeout:
+		print('timeout error')
+		
+		# Maybe set up for a retry, or continue in a retry loop
+	except requests.exceptions.TooManyRedirects:
+		print('too many redrect timeout')
+		
+		# Tell the user their URL was bad and try a different one
+	except requests.exceptions.RequestException as e:
+		# catastrophic error. bail.
+		print('errornya :',e)
+	
 
     
-    print("latnya %s longnya %s speednya %s" % (lat,lon,speed))
+	print("latnya %s longnya %s speednya %s" % (lat,lon,speed))
 
 
 

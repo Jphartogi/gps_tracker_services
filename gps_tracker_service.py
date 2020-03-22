@@ -5,6 +5,7 @@ import time
 yucom_uri = 'http://yucomtrack.co.id/track-api/unit/read.php?po=qlue'
 traccar_uri = 'http://traccar.qlue.id:5055'
 device_id = 313484
+delay = 5
 
 
 def getData():
@@ -34,11 +35,12 @@ def getData():
 	lat = content['latitude']
 	lon = content['longitude']
 	speed = content['speed']
+	heading = content['direction']
 	
-	return lat,lon,speed
+	return lat,lon,speed,heading
     
 
-def postData(lat,lon,speed):
+def postData(lat,lon,speed,heading):
     #
 
 	myobj = {
@@ -46,7 +48,8 @@ def postData(lat,lon,speed):
 		'lat': lat,
 		'lon': lon,
 		'timestamp': getTime(),
-		'speed':speed
+		'speed':speed,
+		'heading':heading
 	}
 
 	try:
@@ -65,7 +68,7 @@ def postData(lat,lon,speed):
 	
 
     
-	print("latnya %s longnya %s speednya %s" % (lat,lon,speed))
+	print("latnya %s longnya %s speednya %s headingnya  %s"  % (lat,lon,speed,heading))
 	print(x.text)
 
 def getTime():
@@ -75,12 +78,12 @@ def getTime():
 
 if __name__ == "__main__":
 	while True:
-		lat,lon,speed = getData()
+		lat,lon,speed,heading = getData()
 		if lat == 0 and lon == 0 and speed == 0 :
 			print('data failed to retrieve')
 		else:
-			postData(lat,lon,speed)
-			time.sleep(5)
+			postData(lat,lon,speed,heading)
+			time.sleep(delay)
 		time.sleep(1)
         
     
